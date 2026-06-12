@@ -63,6 +63,7 @@ request adding CHANGELOG notes for breaking (!) changes and possibly other secti
 ### Fixes
 - `RateLimiterFilter` now returns an Iceberg-compatible `ErrorResponse` JSON body on HTTP 429, with `Content-Type: application/json`. Previously the body was empty, causing Iceberg REST clients to surface an opaque error.
 - The admin tool `purge` command now prints the underlying exception stack trace to stderr when a purge fails unexpectedly, matching the `bootstrap` command. Previously a failed purge printed only a generic message, giving operators no diagnostic information.
+- Renaming a table or view now maps concurrent-modification and resolution failures to meaningful HTTP status codes instead of HTTP 500. A concurrent modification of the source returns 503 (Service Unavailable, retryable); a source or target path that no longer resolves (concurrently dropped or replaced) returns 404 (Not Found). HTTP 409 is intentionally not used because the Iceberg REST rename endpoint reserves 409 for "the target already exists".
 
 ## [1.5.0]
 
