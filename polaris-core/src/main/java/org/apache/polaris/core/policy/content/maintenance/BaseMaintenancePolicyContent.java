@@ -20,15 +20,17 @@ package org.apache.polaris.core.policy.content.maintenance;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Strings;
 import java.util.Map;
 import java.util.Set;
 import org.apache.polaris.core.policy.content.PolicyContent;
 import org.apache.polaris.core.policy.content.StrictBooleanDeserializer;
 import org.apache.polaris.core.policy.validator.InvalidPolicyException;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 public abstract class BaseMaintenancePolicyContent implements PolicyContent {
+  // PolicyContentUtil.MAPPER also registers StrictBooleanDeserializer for boolean/Boolean; keep
+  // the annotation so the intended strictness is visible on the model.
   @JsonDeserialize(using = StrictBooleanDeserializer.class)
   private Boolean enable;
 

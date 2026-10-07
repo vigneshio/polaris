@@ -154,6 +154,24 @@ public class MaintenancePolicyContentTest {
         .hasMessageContaining("Invalid policy");
   }
 
+  static Stream<Arguments> coercedEnableValues() {
+    return Stream.of(
+        Arguments.of("{\"enable\": \"true\"}"),
+        Arguments.of("{\"enable\": \"TRUE\"}"),
+        Arguments.of("{\"enable\": \"false\"}"),
+        Arguments.of("{\"enable\": 1}"),
+        Arguments.of("{\"enable\": 0}"));
+  }
+
+  @ParameterizedTest
+  @MethodSource("coercedEnableValues")
+  void testRejectsCoercedEnableValues(String invalidPolicy) {
+    // StrictBooleanDeserializer must run under Jackson 3; otherwise these are accepted.
+    assertThatThrownBy(() -> DataCompactionPolicyContent.fromString(invalidPolicy))
+        .isInstanceOf(InvalidPolicyException.class)
+        .hasMessageContaining("Invalid");
+  }
+
   @Test
   public void testValidOrphanFileRemovalPolicyContent() {
     assertThat(

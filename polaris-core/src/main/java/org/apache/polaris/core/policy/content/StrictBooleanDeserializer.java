@@ -18,22 +18,26 @@
  */
 package org.apache.polaris.core.policy.content;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import java.io.IOException;
 import org.apache.polaris.core.policy.validator.InvalidPolicyException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-public class StrictBooleanDeserializer extends JsonDeserializer<Boolean> {
+/**
+ * Accepts only JSON boolean literals {@code true} / {@code false}. Rejects string and numeric
+ * coercions such as {@code "true"}, {@code "TRUE"}, {@code 1}, and {@code 0}.
+ */
+public class StrictBooleanDeserializer extends ValueDeserializer<Boolean> {
   @Override
-  public Boolean deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-    String text = p.getText();
-    if ("true".equals(text)) {
+  public Boolean deserialize(JsonParser p, DeserializationContext ctxt) {
+    JsonToken token = p.currentToken();
+    if (token == JsonToken.VALUE_TRUE) {
       return Boolean.TRUE;
-    } else if ("false".equals(text)) {
-      return Boolean.FALSE;
-    } else {
-      throw new InvalidPolicyException("Invalid boolean value: " + text);
     }
+    if (token == JsonToken.VALUE_FALSE) {
+      return Boolean.FALSE;
+    }
+    throw new InvalidPolicyException("Invalid boolean value: " + p.getValueAsString());
   }
 }

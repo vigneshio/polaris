@@ -21,12 +21,20 @@ package org.apache.polaris.core.policy.content;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 public class PolicyContentUtil {
   public static final ObjectMapper MAPPER = configureMapper();
 
   private static ObjectMapper configureMapper() {
+    SimpleModule strictBooleans = new SimpleModule();
+    StrictBooleanDeserializer strictBooleanDeserializer = new StrictBooleanDeserializer();
+    // Creator parameters are primitive boolean; boxed Boolean covers any boxed uses.
+    strictBooleans.addDeserializer(Boolean.TYPE, strictBooleanDeserializer);
+    strictBooleans.addDeserializer(Boolean.class, strictBooleanDeserializer);
+
     return JsonMapper.builder()
+        .addModule(strictBooleans)
         // Fails if a required field (in the constructor) is missing
         .configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true)
         // Fails if a required field is present but explicitly null, e.g., {"enable": null}

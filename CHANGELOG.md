@@ -109,6 +109,9 @@ request adding CHANGELOG notes for breaking (!) changes and possibly other secti
 
 ### Fixes
 
+- Maintenance policy content now strictly accepts JSON boolean literals for `enable` under the
+  Jackson 3 parser. The previous Jackson 2 `@JsonDeserialize` was ignored, so values such as
+  `"true"`, `"TRUE"`, `1`, and `0` were accepted.
 - NoSQL maintenance: realm purging now honors its own state filter consistently. `purgeRealms`
   keeps only realms in `PURGING`/`PURGED` state (and logs the rest as "will therefore not be
   purged"), but the direct `backend.deleteRealms(...)` call and the subsequent realm-status update
