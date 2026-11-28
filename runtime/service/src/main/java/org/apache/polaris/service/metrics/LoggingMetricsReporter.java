@@ -34,7 +34,8 @@ import org.slf4j.LoggerFactory;
  * {@code "default"} (the default value).
  *
  * <p>By default, logging is disabled. To enable metrics logging, set the logger level for {@code
- * org.apache.polaris.extension.metrics.reports} to {@code INFO} in your logging configuration.
+ * org.apache.polaris.service.metrics.LoggingMetricsReporter} to {@code INFO} in your logging
+ * configuration.
  *
  * @see IcebergMetricsReporter
  */
